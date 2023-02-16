@@ -55,3 +55,16 @@ dataframe %>%
   group_by(some_column) %>% 
   summarize(count = n())
 ```
+
+## How to write a filter
+```{r}
+journalism_courses <- umd_courses %>% filter(department == "Journalism")
+```
+so name it, then carrot arrow, the data frame, pipe character, filter(operator == "case sensitive filter thing")
+
+## How to find certain things in data
+```{r}
+umd_courses %>% 
+  filter(str_detect(title, "Shakespeare"))
+```
+very cool
