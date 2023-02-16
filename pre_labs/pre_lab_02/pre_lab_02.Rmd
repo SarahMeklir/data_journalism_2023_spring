@@ -125,7 +125,7 @@ and_theatre_seats_15 <- umd_courses %>% filter(department == "Theatre" | seats >
 nrow(and_theatre_seats_15)
 ```
 
-**Answer**
+**Answer** 37480
 
 When it comes to filters, OR is additive; AND is restrictive.
 
@@ -168,7 +168,7 @@ maryland_expenses <- maryland_expenses %>% mutate(expenditure_date=mdy(expenditu
 head(maryland_expenses)
 ```
 
-**Answer:**
+**Answer:** The date shifted from month/day/year with no extra characters (2 instead of 02, 22 instead of 2022) to year-month-day with all the characters (2022 and 02), and it went from chr type to date type. It's kind of a permanent replacement, though, so gotta be careful about it because otherwise you have to reload the data.
 
 Lubridate has functions for basically any type of character date format: mdy, ymd, even datetimes like ymd_hms.
 
@@ -204,7 +204,7 @@ So the month of June 2022 had the most expenditures by far in this data.
 
 Describe the values in the new `month` column - what do you think is going on there?
 
-**Answer**
+**Answer** It's only displaying the first of each month, so I think it's consolidating all the month's individual days' total expenditures to one day.
 
 ### Task 10: Mutate
 
@@ -234,7 +234,7 @@ general_22 <- general_22 %>%
 
 Describe what you think this code is doing below.
 
-**Answer**
+**Answer** It's making a new column (total_votes) counting up all the votes for all the candidates, and another new column (pct_moore) seeing what percent of the total votes Wes Moore received by dividing his votes by the newly created total votes count. It will show up as a decimal because it's just dividing and not multiplying by 100. 
 
 ### Task 11: Better percentage calculation
 
@@ -263,7 +263,7 @@ general_22 <- general_22 %>%
 
 How did the answer change from the previous task, and why?
 
-**Answer**
+**Answer** The output organizes the data by the percent of the total vote Wes Moore recieved, from highest percentage to lowest. It's also now in actual fraction form because it got multiplied by 100.
 
 ### Task 13: Mutate with ordering, part 2
 
@@ -277,7 +277,7 @@ general_22 %>%
 
 Is this a more interesting or useful answer? Why?
 
-**Answer**
+**Answer** I don't think it's more useful, but it is interesting. The lowest percentage of the vote he got was 22%, which still seems like a hefty chunk.
 
 ### Task 14: Standardize existing data using mutate
 
@@ -305,7 +305,7 @@ standardized_maryland_expenses <- maryland_expenses %>%
 
 **Task** Search the Internet for tidyverse functions similar to str_to_upper. Name at least two and describe what they do. If you use ChatGPT for this, include the question you submitted.
 
-**Answer**
+**Answer** str_to_lower changes a string to lowercase, and str_to_title changes the first letter of each word to be uppercase.
 
 There are lots of potential uses for standardization - addresses, zip codes, anything that can be misspelled or abbreviated.
 
@@ -315,7 +315,7 @@ Mutate is even more useful when combined with some additional functions. Let's k
 
 **Task** Run the following code and look at the output. Then write a sentence or two describing what you think the mutate statement is doing step by step.
 
-**Answer**
+**Answer** First it's naming the function to specify that the data it produces is associated with states. It's finding states and changing them to an output that is more consistent and convenient to analyze the data. 
 
 ```{r}
 maryland_expenses_with_state <- maryland_expenses %>%
@@ -350,7 +350,7 @@ maryland_expenses_with_state %>%
 
 Does this answer make sense to you? Why or why not?
 
-**Answer**
+**Answer** If my understanding of it is right, it does make sense. It's displaying the total money from each state we previously specified. 
 
 Mutate is there to make your data more useful and to make it easier for you to ask more and better questions of it.
 
@@ -360,8 +360,8 @@ Now that you have seen how to use mutate, filtering and dates, give me three que
 
 **Answer**
 
-1. 
+1. I'd try to add commas to that last data table from Maryland expenditures so it is easier to read quickly at a glance. 
 
-2.  
+2. I'd be interested to see how many course titles mention social media since 2017 and how that number has changed
 
-3.  
+3.  I'd like to see which teacher has taught in the most departments, but that may be difficult because if two or more instructors share a name it's hard to fix that problem with the data we have.
