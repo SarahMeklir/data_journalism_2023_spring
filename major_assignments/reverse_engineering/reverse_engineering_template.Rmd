@@ -40,8 +40,9 @@ In this section, describe the source of the data, write a basic data dictionary 
 absentee_data <- read_csv("~/Documents/data_journalism_2023_spring/major_assignments/reverse_engineering/data/absentee_20181106.csv", guess_max=2111797)
 
 absentee_data
-# Clean required data and prepare for analysis if needed. 
+# Clean required data and prepare for analysis if needed.
 
+# Alright! So! Our plan is to filter by mail-in ballots that weren't accepted (excluding those marked "not voted"), get the total number of mail-in ballots that weren't accepted for each race, and sort them from in descending order to see whether their headline is accurate. For reference, their headline was "In North Carolina, Black Voters’ Mail-In Ballots Much More Likely to Be Rejected Than Those From Any Other Race".
 ```
 
 ## Sentences to Engineer
