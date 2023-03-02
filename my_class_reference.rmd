@@ -68,3 +68,15 @@ umd_courses %>%
   filter(str_detect(title, "Shakespeare"))
 ```
 very cool
+
+make sure date stuff is chill:
+maryland_expenses <- maryland_expenses %>% mutate(expenditure_date=mdy(expenditure_date))
+
+head(maryland_expenses)
+
+then sort/group by month and find amounts
+maryland_expenses %>%
+  mutate(month = floor_date(expenditure_date, "month")) %>%
+  group_by(month) %>%
+  summarise(total_amount = sum(amount)) %>%
+  arrange(desc(total_amount))

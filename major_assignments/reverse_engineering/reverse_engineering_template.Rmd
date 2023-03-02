@@ -25,7 +25,8 @@ In this notebook, we are reverse engineering the story, [STORY NAME](STORY URL)
 Loading required libraries for this analysis.
 
 ```{r echo=FALSE, message=FALSE}
-
+library(tidyverse)
+library(janitor)
 ```
 
 ## Load and Cleaning Data
@@ -36,9 +37,10 @@ In this section, describe the source of the data, write a basic data dictionary 
 # Load required data
 
 # Path to data should be loaded from folder "data" i.e. read_csv("data/name_of_data.csv")
+absentee_data <- read_csv("~/Documents/data_journalism_2023_spring/major_assignments/reverse_engineering/data/absentee_20181106.csv", guess_max=2111797)
 
+absentee_data
 # Clean required data and prepare for analysis if needed. 
-
 
 ```
 
