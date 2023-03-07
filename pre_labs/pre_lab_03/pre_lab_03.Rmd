@@ -57,7 +57,7 @@ payments <- read_csv("data/State_of_Maryland_Payments_Data__FY2008_to_FY2023.csv
 glimpse(payments)
 ```
 
-Things that should be characters -- like agency name, vendor name -- are characters (chr). Things that should be numbers (dbl) -- like amount and fiscal year -- are numbers. We've seen before that sometimes dates aren't defined as date datatypes by R - we can fix that using `lubridate`.
+Things that should be characters -- like agency name, vendor name -- are characters (chr). Things that should be numbers (dbl) -- like amount and fiscal year -- are numbers. We've seen before that sometimes dateks aren't defined as date datatypes by R - we can fix that using `lubridate`.
 
 ### Task 5: Detect wrong spatial data
 
