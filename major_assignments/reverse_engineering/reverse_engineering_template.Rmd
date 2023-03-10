@@ -20,7 +20,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 In this notebook, we are reverse engineering the story, [STORY NAME](STORY URL)
 
-## Load libraries
+## Load libraries 
+## LOAD THE URL WHICH IS THIS: https://www.propublica.org/article/in-north-carolina-black-voters-mail-in-ballots-much-more-likely-to-be-rejected-than-those-from-any-other-race 
 
 Loading required libraries for this analysis.
 
@@ -37,7 +38,7 @@ In this section, describe the source of the data, write a basic data dictionary 
 # Load required data
 
 # Path to data should be loaded from folder "data" i.e. read_csv("data/name_of_data.csv")
-absentee_data <- read_csv("~/Documents/data_journalism_2023_spring/major_assignments/reverse_engineering/data/absentee_20181106.csv", guess_max=2111797)
+absentee_data <- read_csv("~/Documents/data_journalism_2023_spring/major_assignments/reverse_engineering/data/absentee_20181106.csv", guess_max=2111797) 
 
 absentee_data
 # Clean required data and prepare for analysis if needed.
@@ -50,43 +51,62 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 1
 
-* **Sentence text**: [Paste in sentence to engineer here]
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+* **Sentence text**: "In North Carolina, Black Voters’ Mail-In Ballots Much More Likely to Be Rejected Than Those From Any Other Race"
+* **Analysis summary**: We were not able to confirm the finding. We filtered to keep the statuses that seemed like they constituted a "rejection", and sorted by race totals and found that there were more white ballots rejected than those of other races. Specifically, 9992 for white people versus 4941 for Black people. We probably did something wrong, but that's the conclusion we got. We talked about maybe needing to divide by population or something along those lines to make sure things were proportional.
 
 ```{r}
 # Put code to reverse engineer sentence here
+question_one <- absentee_data %>% 
+  filter((ballot_rtn_status == "WRONG VOTER") | (ballot_rtn_status == "WITNESS INFO INCOMPLETE") | (ballot_rtn_status == "VOTER SIGNATURE MISSING") | (ballot_rtn_status == "SPOILED") | (ballot_rtn_status == "NOT PROPERLY NOTARIZED") | (ballot_rtn_status == "RETURNED UNDELIVERABLE")) 
+question_one <- question_one %>% 
+  group_by(race) %>% 
+  summarize(race_totals = n()) %>% 
+  arrange(desc(race_totals))
 
 # Display results of code below this codeblock
+question_one
 
+# | str_detect(ballot_rtn_status = "WRONG VOTER") | str_detect(ballot_rtn_status = "WITNESS INFO INCOMPLETE") | str_detect(ballot_rtn_status = "VOTER SIGNATURE MISSING") | str_detect(ballot_rtn_status = "SPOILED") | str_detect(ballot_rtn_status = "NOT PROPERLY NOTARIZED") | str_detect(ballot_rtn_status = "RETURNED UNDELIVERABLE")
 ```
 
 ### Sentence 2
 
-* **Sentence text**: [Paste in sentence to engineer here]
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+* **Sentence text**: "In North Carolina, a swing state, Black voters are the largest racial group among Democratic voters, making up 46% of party members."
+* **Analysis summary**: We almost confirmed the finding. We got 44.3% versus the almost 46% in the story. To do this, we filtered by democratic voter party code (though I'm not sure what that means), then counted the ballots for each race and divided that by the total rows in the data set.
 
 ```{r}
 # Put code to reverse engineer sentence here
-
+question_two <- absentee_data %>% 
+  filter(voter_party_code == "DEM") %>% 
+  group_by(race) %>% 
+  summarise(race_totals = n()) %>% 
+  mutate(race_pct = race_totals/899195)
 # Display results of code below this codeblock
-
+question_two
 ```
 
 ### Sentence 3
 
-* **Sentence text**: [Paste in sentence to engineer here]
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+* **Sentence text**: "The analysis by ProPublica and WRAL News shows 40% of rejected ballots were submitted by voters who identify as Black or African American, Indian American or Alaska Native, Asian, two or more races, or “other.”"
+* **Analysis summary**: Our result was 37.1%, which comes very close to confirming the finding. We took a similar approach as with our previous two questions and once we had our percentage data, we added up Black or African American, Indian American or Alaska Native, Asian, two or more races, or "other", rounding to the nearest hundredth. 
 
 ```{r}
 # Put code to reverse engineer sentence here
-
+question_three <- absentee_data %>% 
+  filter((ballot_rtn_status == "WRONG VOTER") | (ballot_rtn_status == "WITNESS INFO INCOMPLETE") | (ballot_rtn_status == "VOTER SIGNATURE MISSING") | (ballot_rtn_status == "SPOILED") | (ballot_rtn_status == "NOT PROPERLY NOTARIZED") | (ballot_rtn_status == "RETURNED UNDELIVERABLE")) 
+  
+question_three <- question_three %>% 
+  group_by(race) %>% 
+  summarize(race_totals = n()) %>% 
+  mutate(race_pct = race_totals/16999) %>% 
+  arrange(desc(race_pct))
 # Display results of code below this codeblock
-
+question_three
 ```
 
 ### Sentence 4
 
-* **Sentence text**: [Paste in sentence to engineer here]
+* **Sentence text**: "As of Sept. 23, the rejection rate for mail-in ballots submitted by Black voters was about 3%"
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
@@ -98,7 +118,7 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 5
 
-* **Sentence text**: [Paste in sentence to engineer here]
+* **Sentence text**: "Guilford County, the third-most populous county in North Carolina, rejected the largest number of mail-in ballots by Black voters statewide: 177"
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}

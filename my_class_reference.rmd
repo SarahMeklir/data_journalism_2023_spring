@@ -69,7 +69,7 @@ umd_courses %>%
 ```
 very cool
 
-make sure date stuff is chill:
+## make sure date stuff is chill:
 maryland_expenses <- maryland_expenses %>% mutate(expenditure_date=mdy(expenditure_date))
 
 head(maryland_expenses)
@@ -80,3 +80,4 @@ maryland_expenses %>%
   group_by(month) %>%
   summarise(total_amount = sum(amount)) %>%
   arrange(desc(total_amount))
+  
