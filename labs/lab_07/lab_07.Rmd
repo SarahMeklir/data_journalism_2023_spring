@@ -105,9 +105,10 @@ ODbyMDZip <- MDadultpop21 %>% left_join(ZipODMoco22, by=c('GEOID'='zip')) %>%
 **Q5** Go back to your joined dataframe from Q3 and add two more columns representing the minimum and maximum populations based on the estimate and margin of error, then calculate per capita rates for each. Do you get the same two zip codes for the highest and lowest as you did before? Does that give you more or less confidence in your answers to Q3?
 
 **A5** 
-
+I definitely got different zip codes. That makes me less confident.
 ```{r}
 ODbyMDZip %>% 
-  mutate(min=(estimate-moe), max=(estimate+moe))
+  mutate(min=(estimate-moe), max=(estimate+moe), percap_min=((min/estimate)*1000), percap_max=((max/estimate)*1000)) %>% 
+  arrange(desc(percap_min))
 ```
 
