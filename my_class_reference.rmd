@@ -88,7 +88,7 @@ View(county_voters_combined)
 ## to combine population chart with voter number chart with nrow included to show row total
 maryland_population %>% left_join(county_voters_2022, by="COUNTY") %>% nrow()
 
-## to combine pop chart w voter pop chart
+## to combine pop chart w voter pop chart (any time you use join, create a new dataframe for it. Order-sensitive)
   maryland_population_with_voters <- maryland_population %>% left_join(county_voters_2022)
   
 ## combining things when the column names don't align
