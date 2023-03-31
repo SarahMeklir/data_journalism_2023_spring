@@ -111,9 +111,21 @@ question_three
 
 ```{r}
 # Put code to reverse engineer sentence here
+question_four <- absentee_data %>% 
+  filter((ballot_rtn_status == "WRONG VOTER") | (ballot_rtn_status == "WITNESS INFO INCOMPLETE") | (ballot_rtn_status == "VOTER SIGNATURE MISSING") | (ballot_rtn_status == "SPOILED") | (ballot_rtn_status == "NOT PROPERLY NOTARIZED") | (ballot_rtn_status == "RETURNED UNDELIVERABLE")) %>% 
+  filter((ballot_req_type == 'MAIL'), (race == "BLACK or AFRICAN AMERICAN")) %>% 
+  summarize(rejected_black_mail_ballots = n())
+
+total_black_ballots <- absentee_data %>% 
+  filter((ballot_req_type == 'MAIL'), (race == "BLACK or AFRICAN AMERICAN")) %>% 
+  summarize(total_black_mail_ballots = n())
 
 # Display results of code below this codeblock
+question_four
+total_black_ballots
 
+total_black_ballots %>% 
+  summarize(rejected_black_mail_ballot_rate = 4864/total_black_mail_ballots)
 ```
 
 ### Sentence 5
@@ -123,7 +135,15 @@ question_three
 
 ```{r}
 # Put code to reverse engineer sentence here
-
+question_five <- absentee_data %>% 
+  filter((ballot_rtn_status == "WRONG VOTER") | (ballot_rtn_status == "WITNESS INFO INCOMPLETE") | (ballot_rtn_status == "VOTER SIGNATURE MISSING") | (ballot_rtn_status == "SPOILED") | (ballot_rtn_status == "NOT PROPERLY NOTARIZED") | (ballot_rtn_status == "RETURNED UNDELIVERABLE")) %>% 
+  filter((ballot_req_type == 'MAIL'), (race == "BLACK or AFRICAN AMERICAN")) %>% 
+  
+  group_by(county_desc) %>% 
+  summarize(county_rejected_total = n()) %>% 
+  arrange(desc(county_rejected_total))
+  question_five
+  
 # Display results of code below this codeblock
 
 ```
