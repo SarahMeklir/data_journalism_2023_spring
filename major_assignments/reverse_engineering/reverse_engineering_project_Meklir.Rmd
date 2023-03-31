@@ -57,7 +57,7 @@ In this notebook, we are reverse engineering five sentences from the story.
 ```{r}
 # Put code to reverse engineer sentence here
 question_one <- absentee_data %>% 
-  filter((ballot_rtn_status == "WRONG VOTER") | (ballot_rtn_status == "WITNESS INFO INCOMPLETE") | (ballot_rtn_status == "VOTER SIGNATURE MISSING") | (ballot_rtn_status == "SPOILED") | (ballot_rtn_status == "NOT PROPERLY NOTARIZED") | (ballot_rtn_status == "RETURNED UNDELIVERABLE")) 
+  filter((ballot_rtn_status == "WRONG VOTER") | (ballot_rtn_status == "WITNESS INFO INCOMPLETE") | (ballot_rtn_status == "VOTER SIGNATURE MISSING") | (ballot_rtn_status == "SPOILED") | (ballot_rtn_status == "NOT PROPERLY NOTARIZED") | (ballot_rtn_status == "RETURNED UNDELIVERABLE"), (ballot_req_type == 'MAIL')) 
 question_one <- question_one %>% 
   group_by(race) %>% 
   summarize(race_totals = n()) %>% 
@@ -66,7 +66,7 @@ question_one <- question_one %>%
 # Display results of code below this codeblock
 question_one
 
-# | str_detect(ballot_rtn_status = "WRONG VOTER") | str_detect(ballot_rtn_status = "WITNESS INFO INCOMPLETE") | str_detect(ballot_rtn_status = "VOTER SIGNATURE MISSING") | str_detect(ballot_rtn_status = "SPOILED") | str_detect(ballot_rtn_status = "NOT PROPERLY NOTARIZED") | str_detect(ballot_rtn_status = "RETURNED UNDELIVERABLE")
+# We added the mail filter you gave us in reverse_engineering_project_milestone_03 to sort through the correct types of ballots
 ```
 
 ### Sentence 2
