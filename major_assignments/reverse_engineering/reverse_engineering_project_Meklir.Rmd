@@ -65,7 +65,7 @@ ballot_total_by_race <- absentee_data %>%
 
 rejected_total_by_race <- absentee_data %>%  
   filter((ballot_req_type == 'MAIL'), (ballot_rtn_dt != "NA")) %>% 
-  filter((ballot_rtn_status == "WRONG VOTER") | (ballot_rtn_status == "WITNESS INFO INCOMPLETE") | (ballot_rtn_status == "VOTER SIGNATURE MISSING") | (ballot_rtn_status == "SPOILED") | (ballot_rtn_status == "NOT PROPERLY NOTARIZED") | (ballot_rtn_status == "RETURNED UNDELIVERABLE")) %>% 
+  filter((ballot_rtn_status == "WRONG VOTER") | (ballot_rtn_status == "WITNESS INFO INCOMPLETE") | (ballot_rtn_status == "VOTER SIGNATURE MISSING") | (ballot_rtn_status == "SPOILED") | (ballot_rtn_status == "NOT PROPERLY NOTARIZED") | (ballot_rtn_status == "SIGNATURE DIFFERENT") | (ballot_rtn_status == "RETURNED UNDELIVERABLE")) %>% 
   group_by(race) %>% 
   summarize(rejected_totals = n()) %>% 
   arrange(desc(rejected_totals))
@@ -122,7 +122,7 @@ question_three <- absentee_data %>%
   filter((ballot_rtn_status == "WRONG VOTER") | (ballot_rtn_status == "WITNESS INFO INCOMPLETE") | (ballot_rtn_status == "VOTER SIGNATURE MISSING") | (ballot_rtn_status == "SPOILED") | (ballot_rtn_status == "NOT PROPERLY NOTARIZED") | (ballot_rtn_status == "RETURNED UNDELIVERABLE")) %>%
   group_by(race) %>% 
   summarize(race_totals = n()) %>% 
-  mutate(race_pct = (race_totals/5567)*100) %>% 
+  mutate(race_pct = (race_totals/5600)*100) %>% 
   arrange(desc(race_pct))
 # Display results of code below this codeblock
 rejected_total
