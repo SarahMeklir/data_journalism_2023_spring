@@ -24,9 +24,23 @@ md_foreclosure_data %>%
   
 ```
 
-Question 1: Where are there more foreclosures? Why? 
+Question 1: a.) Where are there more foreclosures? **We just thought of this follow up question, so we're adding it here** b.) Is it different based on pop? Why? 
 This is newsworthy because it would give insight into locations that experience higher numbers of debt, allowing a conclusion to be made about the area’s economic state.
 - it would help to have cities for this one to generalize the count
+// february 2022 is missing, feb 2020 is there instead. Maybe they mixed up the titles?
+// For the first attempt at this and to see some data we're just totaling up 2022 because that's the only full year we have.
+// 20772 is the highest in 2022, in Upper Marlboro in PG county. 
+We're considering using the census api you used in prelab 10 to find population data for our counties. In the meantime, we're making a map with flawed data (aka data not smoothed out by population density)
+
+**Here's a map! https://datawrapper.dwcdn.net/XGE1F/1/**
+```{r}
+md_foreclosure_data <- md_foreclosure_data %>% 
+  group_by(Zip) %>% 
+  mutate(zip_2022_total = `January 2022` + `February 2020` + `March 2022` + `April 2022` + `May 2022` + `June 2022` + `July 2022` + `August 2022` + `September 2022` + `October 2022` + `November 2022` + `December 2022`) %>% 
+  arrange(desc(zip_2022_total))
+
+write_csv(md_foreclosure_data, "data/md_foreclosure_data.csv")
+```
 
 Question 2: When were there the fewest or most foreclosures? Why?
 This would likely indicate a change due to COVID, but I’m not sure whether that change would add more foreclosures or fewer due to the rent extensions the government allowed in the early days of the pandemic.
@@ -36,9 +50,18 @@ Question 3: What are the income levels for the most and least foreclosed-upon ar
 This would show us how the value of homes and the income of people purchasing them differs in different income brackets.
 - outside research
 
+**Per capita income for 20772 (the highest number of foreclosures in 2022) is $53,168 according to https://www.incomebyzipcode.com/maryland/20772**
+There are a WHOLE lot of zipcodes without any foreclosure notices OR with just one for 2022, so in the next few iterations of this project we'll try to combine zipcode data for each city so we have larger numbers to work with and more accurate population data.
+
+
+
 Question 4: What does the racial demographic data look like in the areas of interest?
 This is newsworthy because it would give us hard data on any disparities that might exist while comparing the income levels, foreclosure rate, and predominant races being foreclosed on.
 - voter, census, or background research to find percentages
+
+**according to this website (https://www.unitedstateszipcodes.org/20772/#:~:text=The%20people%20living%20in%20ZIP,than%20average%20number%20of%20families) the demographic data for 20772 is 79% Black and a high proportion of homeowners in their late 20s to early 40s.**
+
+**we are not needing to do a ton of coding for this, let's find a time next week for the three of us to meet so we can discuss ways to deepen the level of coding we do and questions we ask.**
 
 Question 5: How long were people living there before they were foreclosed on? 
 I don’t know whether this data is provided but it would be interesting and would allow us to see the frequency of turnover. If we could compare the buying and selling frequency of highly foreclosed areas to that of infrequently foreclosed areas, it would add a new depth to our research. 
