@@ -1,0 +1,96 @@
+---
+title: "lab_12"
+author: "derek willis"
+date: "2023-05-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## You will need
+
+* tidytext and our usual libraries
+
+## Load libraries and establish settings
+```{r}
+library(tidyverse)
+library(tidytext)
+library(janitor)
+library(lubridate)
+library(rvest)
+```
+**Task** Create a codeblock and load appropriate packages and settings for this lab.
+
+## Questions
+
+**Q1.** You've been assigned to report a story about the leading reasons that Maryland attorneys get sanctioned by the state for misconduct. The state [publishes lists of sanctions](https://www.courts.state.md.us/attygrievance/sanctions) that contain a short text description about the situation. Load the CSV file in the data folder containing records from fiscal year 2011 onwards. Make a list of unique words from the text column, then following the example in the pre_lab, remove common "stop words" from that list and create a list of the top 10 words containing the percentage of occurrences each word represents. What's the leading word in that answer and, broadly, what do you think the top 10 words describe?
+
+**A1.** The leading word is "failing" by a remarkable margin. Few of the others can be attributed to emotion until you get to "failed" at number 8, so it is a little bleak.
+
+```{r}
+sanctions <- read_csv("~/Documents/data_journalism_2023_spring/labs/lab_12/data/md_attorney_sanctions.csv")
+
+unique_words <- sanctions %>% select(text) %>%
+  unnest_tokens(word, text)
+  count(word, sort = TRUE) %>%
+  top_n(25) %>%
+  mutate(word = reorder(word, n)) %>%
+View(unique_words)
+
+data("stop_words")
+
+stop_words <- stop_words %>%
+  add_row(word = 'sanction') %>% 
+  add_row(word = "action") %>% 
+  add_row(word = "attorney") %>% 
+  add_row(word = "engaging") %>%
+  add_row(word = "received") %>%
+  add_row(word = "client") %>%
+  add_row(word = 'paid') %>% 
+  add_row(word = 'payments') %>% 
+  add_row(word = 'client') 
+
+unique_words %>%
+  anti_join(stop_words) %>%
+  group_by(word) %>%
+  tally(sort=TRUE) %>%
+  mutate(percent = (n/sum(n))*100) %>%
+  top_n(50)
+```
+
+**Q2.** Let's move beyond single words to phrases. Make a list of the top 10 three-word phrases, called trigrams, based on the example from the pre_lab (you'll need to modify the example code to do this). What's the top trigram and how often does it appear? What does that phrase mean in legal terms?
+
+**A2.** "conduct involving dishonesty" and "dishonesty fraud deceit" are tied for the top spot, with "involving dishonesty fraud" a very close second. That's... bad. Super not positive stuff. It means lying and misleading and — in legal terms — it means "not good." 
+
+```{r}
+sanctions %>%
+  unnest_tokens(trigram, text, token = "ngrams", n = 3) %>%
+  separate(trigram, c("word1", "word2", "word3"), sep = " ") %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word) %>%
+  filter(!word3 %in% stop_words$word) %>% 
+  mutate(trigram = paste(word1, word2, word3, sep=" ")) %>%
+  group_by(trigram) %>%
+  tally(sort=TRUE) %>%
+  mutate(percent = (n/sum(n))*100) %>%
+  top_n(10)
+```
+
+**Q3.** Let's drop back down to more traditional text analysis - take the top trigram from Q2 and write code to see how many times it occurs in the text column in each fiscal year. What do you think the answer produced by your code suggests? What else could you do to try and clarify the most important reasons attorneys get sanctioned?
+
+**A3.** 
+There have been more messages describing dishonest, fraudulent, or deceitful conduct in the past four years than in the past. It also suggests that by far, the reason attorneys get sanctioned is for unethical behavior, namely lying. To further clarify this, I could go through the text of those specific instances, look for common themes in it, and try to see what they tend to be lying about. The records themselves are overwhelmingly saturated with attorneys being punished for lying, misrepresenting situations or their clients, or even stealing money from their clients or firms. This seems to be trending upward in the past four years. I wonder whether this is a theme across states or if it's limited to Maryland. Could it be a lingering effect of Covid? I don't know how but maybe. I did some looking and it doesn't seem like there's been much coverage (although I could have been searching wrong). I did find recent clarification from the Maryland Court of Appeals about what dishonesty means and how it leads to disbarment: (https://lawprofessors.typepad.com/legal_profession/2022/07/the-maryland-court-of-appeals-further-clarified-its-sanction-analysis-in-cases-involving-dishoesty-in-a-recent-disbarment-cas.html) and it boils down to when attorneys' misleading messaging or outright lies directly harm their client monetarily, reputationally (if that's a word), or legally. 
+
+That article discusses a case represented in the data we're looking at (which I screenshotted and attached below). It said she was disbarred because "Her clients lost claims and defenses due to her serial neglect, paid unreasonable fees, and were deprived of important information necessary to make informed decisions about their cases." If that's just one example of 26 instances in 2022, and 117 (!!!) from 2019 through today in 2023, this is a big problem, and it's getting worse. To put things in perspective, in the six years from 2012 to 2018, there were 40 total mentions of these problems. That (if I'm doing my math right) is a percent change of 1.925 (I did (117-40)/40) which is insane. And bad. And the 117 occurred in a shorter time span than the span in which those 40 occurred. This is a worthwhile trend to investigate.
+```{r}
+commonest_phrases <- sanctions %>%
+  filter(str_detect(text, "conduct involving dishonesty") | str_detect(text, "dishonesty fraud deceit")) %>% 
+  group_by(fiscal_year) %>% 
+  summarize(occurrences = n()) %>% 
+  arrange(desc(occurrences))
+  commonest_phrases
+  
+knitr::include_graphics("~/Documents/data_journalism_2023_spring/labs/lab_12/data/disbarred_lawyer_example.png")
+```
