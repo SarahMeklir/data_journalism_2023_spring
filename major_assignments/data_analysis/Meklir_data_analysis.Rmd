@@ -27,12 +27,12 @@ md_foreclosure_data
   
 ```
 
-Question 1: a.) Where are there more foreclosure notices? **We just thought of this follow up question, so we're adding it here** b.) Is it different based on pop? Why? 
+Question 1: a.) Where are there more foreclosure notices? b.) Is it different based on pop? Why? 
 This is newsworthy because it would give insight into locations that experience higher numbers of debt, allowing a conclusion to be made about the area’s economic state.
 - it would help to have cities for this one to generalize the count
 
-// WE HAVE TO SORT BY POP AHHHHH realized this at the end. Another thursday step. All good.
-**Here's an updated map! https://datawrapper.dwcdn.net/WgzrW/1/**
+*ANSWER THE QUESTION BUDDY*
+**Here's an updated map! https://datawrapper.dwcdn.net/DozmJ/1/**
 ```{r}
 md_foreclosure_data <- md_foreclosure_data %>% 
   group_by(Zip) %>% 
@@ -49,36 +49,60 @@ md_data_and_boundaries <- md_foreclosure_data %>%
 
 md_data_and_boundaries
 
-write_csv(md_data_and_boundaries, "data/q1_md_data_and_boundaries.csv")
+census_api_key("577bf4d5bf135998c07189afd7dc2e2d621240d6")
+ACS5 <- load_variables(2021, "acs5", cache = TRUE) 
+
+MD_pop <- get_acs(geography = "zcta", state = "MD", variables = "B01003_001", year = 2019) %>% 
+  mutate(GEOID = as.double(GEOID))
+  
+md_data_and_boundaries <- md_data_and_boundaries %>% 
+  left_join(MD_pop, by=c("Zip"="GEOID")) %>% 
+  mutate(total_by_pop = (zip_overall_total/estimate)*100)
+  
+write_csv(md_data_and_boundaries, "data/q1_md_data_with_pops.csv")
+
 ```
 
 Question 2: When were there the fewest or most foreclosure notices? Why?
 This would likely indicate a change due to COVID, but I’m not sure whether that change would add more foreclosures or fewer due to the rent extensions the government allowed in the early days of the pandemic.
 
 **Answer**
-
+Distinct upward trend (expand on this)
 ```{r}
 
 write_csv(md_data_and_boundaries, "data/md_data_and_boundaries.csv")
 
 knitr::include_graphics("~/Documents/data_journalism_2023_spring/major_assignments/data_analysis/data/LOOK_AT_THIS_it_is_a_graph.png")
 
-pivoted_data_and_boundaries <- md_data_and_boundaries %>% 
-  pivot_longer(dates=c(`July 2021`, `August 2021`, `September 2021`, `October 2021`, `November 2021`, `December 2021`, `January 2022`, `February 2022`, `March 2022`, `April 2022`, `May 2022`, `June 2022`, `July 2022`, `August 2022`, `September 2022`, `October 2022`, `November 2022`, `December 2022`, `January 2023`, `February 2023`, `March 2023`))
-  
+md_data_and_boundaries <- md_data_and_boundaries %>% 
+  clean_names()
 
+pivoted_data_and_boundaries <- md_data_and_boundaries %>% 
+  pivot_longer(cols = july_2021:march_2023, names_to = "month", values_to = "notices") %>% 
+  mutate(date = my(month)) 
+
+pivoted_data_and_boundaries %>% 
+  ggplot() +
+    geom_col(aes(x = date, y = notices)) +
+    labs(
+      title="MD Monthly Foreclosure Notices 2021-2023",
+      x = "month",
+      y = "notices",
+      caption = "source: Maryland Open Data      by: Emma Tufo and Sarah Meklir"
+    )
 
 ```
 
 Question 3: What are the income levels for the most and least foreclosed-upon (noticed) areas and what does the distribution of that look like?
 This would show us how the value of homes and the income of people purchasing them differs in different income brackets.
 
-**answer**
+**answer** REMINDER: JUST REFER TO SCATTERPLOT WITH ANSWER. ALSO THE SECOND AND THIRD ARE DUPLICATES SO TREAT AS ONE
+
 - The area with the highest median household income is Showell followed by Bethesda according to the data.
 - Areas with the fewest foreclosure notices  have anywhere between no household income (N/A) and the highest income. It was very spread out. We think that's because it's made of government property, airports, and schools.
 - Areas with the most foreclosure notices are Upper Marlboro, Raspeburg (a place neither of us has heard of), and Baltimore. They all have comparatively low median household income generally between $30,000 and $50,000. 
 - Here is a scatterplot :) It shows that there are more foreclosure notices in the middle-to-low median income zipcodes.
-**TO-DO: combine duplicate zips**
+
 ```{r}
 census_api_key("577bf4d5bf135998c07189afd7dc2e2d621240d6")
 ACS5 <- load_variables(2021, "acs5", cache = TRUE) 
@@ -86,21 +110,20 @@ ACS5 <- load_variables(2021, "acs5", cache = TRUE)
 MD_household_income <- get_acs(geography = "zcta", state = "MD", variables = "B06011_001", year = 2019)  %>% 
   mutate(GEOID = as.double(GEOID))
 
-md_data_and_boundaries%>% 
-  left_join(MD_household_income, by=c("Zip"="GEOID")) %>% 
-  mutate(zip_overall_total = `July 2021` + `August 2021` + `September 2021` + `October 2021` + `November 2021` + `December 2021` + `January 2022` + `February 2022` + `March 2022` + `April 2022` + `May 2022` + `June 2022` + `July 2022` + `August 2022` + `September 2022` + `October 2022` + `November 2022` + `December 2022` + `January 2023` + `February 2023` + `March 2023`) %>% 
-  group_by(Zip, ZIPNAME, zip_overall_total) %>% 
-  summarize(Zip, ZIPNAME, estimate, zip_overall_total) %>% 
-  arrange(desc(zip_overall_total)) %>% 
+q3_md_data_and_boundaries <- md_data_and_boundaries %>% 
+  left_join(MD_household_income, by=c("zip"="GEOID")) %>% 
+  rename(median_md_income = estimate.y)
+  
+q3_md_data_and_boundaries %>% 
   ggplot() +
-  geom_point(aes(x=estimate,y=zip_overall_total)) +
-  geom_smooth(aes(x=estimate,y=zip_overall_total), method="lm")
-
-md_data_and_boundaries
+    geom_point(aes(x = median_md_income, y = zip_overall_total)) +
+    labs(
+      title="MD Foreclosure Notices by median income",
+      x = "median income",
+      y = "notices",
+      caption = "source: Maryland Open Data      by: Emma Tufo and Sarah Meklir"
+    )
 ```
-**Per capita income for 20772 (the highest number of foreclosures in 2022) is $53,168 according to https://www.incomebyzipcode.com/maryland/20772**
-There are a WHOLE lot of zipcodes without any foreclosure notices OR with just one for 2022, so in the next few iterations of this project we'll try to combine zipcode data for each city so we have larger numbers to work with and more accurate population data.
-
 
 
 Question 4: What does the racial demographic data look like in the areas of interest?
@@ -111,7 +134,7 @@ This is newsworthy because it would give us hard data on any disparities that mi
 census_api_key("577bf4d5bf135998c07189afd7dc2e2d621240d6")
 ACS5 <- load_variables(2021, "acs5", cache = TRUE) 
 
-MD_demographic_data <- get_acs(geography = "zcta", state = "MD", variables = "B99021_001", year = 2019) 
+MD_demographic_data <- get_acs(geography = "zcta", state = "MD", variables = "B02001_001", year = 2019) 
 MD_demographic_data
 
 ```
