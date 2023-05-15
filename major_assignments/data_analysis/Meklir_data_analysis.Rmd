@@ -232,3 +232,11 @@ q5_md_data_and_boundaries <- md_data_and_boundaries %>%
   
 q5_md_data_and_boundaries
 ```
+
+**Most newsworthy and how we'd investigate further**
+- The findings in question 4 (higher proportion of Black population in areas with more foreclosure notices)
+- The two zipcodes from question 1 with significantly more notices
+
+To investigate further, we would look at income level combined with the racial demographic data and try to look into how frequent the residence turnover rate is in those areas compared to higher income level areas. The frequency of turnover must have some connection to foreclosure notices, though we're not yet sure how we could look at specific data for it. It might involve an MPIA request. 
+
+For the zipcodes in St. Mary's and Dorchester Counties, we would go there. We'd look up people in charge of foreclosure and the larger housing lenders in the area, speak to them, and try to find current and former homeowners in the areas willing to discuss their experiences and those they've witnessed. With such significantly higher foreclosure notices, it must be a prominent subject of discussion in the town(s) and there must be people advocating for fewer foreclosures or people with strong opinions and stories they want to tell. There's a lot of potential here for human interest and personal experience stories. By adding those elements it would strengthen the data-heavy reporting we've already done by adding emotion.
